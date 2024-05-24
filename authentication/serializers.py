@@ -4,12 +4,17 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import Group, Permission
+from roles.serializers import RoleSerializer
 
 class UserTokenSerializer(serializers.ModelSerializer):
-    groups = serializers.PrimaryKeyRelatedField(queryset=Group.objects.all(), many=True)
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["role"] = RoleSerializer(instance.role).data
+        return data
+
     class Meta:
         model = User
-        fields = [ 'id', 'email', 'fullname', 'groups', 'role' ]
+        fields = [ 'id', 'email', 'fullname', 'role' ]
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -46,13 +51,12 @@ class GroupSerializer(serializers.ModelSerializer):
         
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password])
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     confirmPassword = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ('email', 'password', 'confirmPassword')
+        fields = ('email', 'fullname', 'password', 'confirmPassword', 'role')
 
     def validate(self, attrs):
         if attrs['password'] != attrs['confirmPassword']:
@@ -61,10 +65,14 @@ class RegisterSerializer(serializers.ModelSerializer):
 
         return attrs
 
-    def create(self, validated_data):        
+    def create(self, validated_data): 
         user = User.objects.create(
             email = validated_data['email'],
-            username = validated_data['email']
+            username = validated_data['email'],
+            fullname = validated_data['fullname'],
+            role = validated_data['role'],
+            is_active = True
+            # is_active = validated_data['role'].id == 1
         )
 
         user.set_password(validated_data['password'])
