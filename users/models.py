@@ -6,6 +6,7 @@ from roles.models import Role
 class User(AbstractUser):
     fullname = models.CharField(max_length=50)
     email = models.EmailField(max_length=254, unique=True)
+    is_active = models.BooleanField()
     role = models.ForeignKey(Role, on_delete=models.PROTECT, default=1)
     
     USERNAME_FIELD = 'email'
