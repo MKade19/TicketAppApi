@@ -1,7 +1,9 @@
 from django.db import models
-from cities.models import City
 from images.models import Image
-from users.models import User
+from authentication.models import User
+
+class City(models.Model):
+    name = models.CharField(max_length=255)
 
 class Stadium(models.Model):
     name = models.CharField(max_length=255)

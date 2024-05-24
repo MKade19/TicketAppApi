@@ -1,5 +1,5 @@
 from django.contrib import admin
-from users.models import User, Profile
+from .models import User, Profile, Role
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['fullname', 'email']
@@ -11,3 +11,4 @@ class ProfileAdmin(admin.ModelAdmin):
 
 admin.site.register(User, UserAdmin)
 admin.site.register(Profile, ProfileAdmin)
+admin.site.register(Role)

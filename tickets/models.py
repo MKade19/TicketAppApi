@@ -1,6 +1,6 @@
 from django.db import models
-from applications.models import ApplicationSeat
-from users.models import User
+from events.models import ApplicationSeat
+from authentication.models import User
 
 class Ticket(models.Model):
     is_sold = models.BooleanField()
