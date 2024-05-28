@@ -1,22 +1,23 @@
 from rest_framework import serializers
 from .models import Event, Application, ApplicationSeat
+from images.models import Image
 from halls.serializers import HallSerializer
 from images.serializers import ImageSerializer
 from halls.serializers import SeatSerializer
 
 class EventSerializer(serializers.ModelSerializer):
-    images = ImageSerializer(many=True, read_only=True)
-
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["hall"] = HallSerializer(instance.hall).data
-        data["images"] = ImageSerializer(instance.images).data
+        data['images'] = []
+        for entry in instance.images.all():
+            image = ImageSerializer(entry).data
+            data['images'].append(image)
         return data
 
     class Meta:
         model = Event
-        fields = ('id', 'name', 'date', 'begin', 'end', 'images', 'hall')
-        extra_kwargs = {'images': {'required': True}}
+        fields = '__all__'
 
 
 class ApplicationSerializer(serializers.ModelSerializer):

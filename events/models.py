@@ -7,9 +7,9 @@ from halls.models import Seat
 class Event(models.Model):
     name = models.CharField(max_length=255)
     date = models.DateField()
-    begin = models.TimeField()
+    start = models.TimeField()
     end = models.TimeField()
-    images = models.ManyToManyField(Image)
+    images = models.ManyToManyField(Image, blank=True)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     hall = models.ForeignKey(Hall, on_delete=models.CASCADE)
     administrator = models.ForeignKey(User, on_delete=models.CASCADE)
