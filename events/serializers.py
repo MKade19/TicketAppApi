@@ -5,10 +5,20 @@ from halls.serializers import HallSerializer
 from images.serializers import ImageSerializer
 from halls.serializers import SeatSerializer
 
+class ApplicationSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["event"] = EventSerializer(instance.event).data
+        return data
+
+    class Meta:
+        model = Application
+        fields = '__all__'
+
+
 class EventSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["hall"] = HallSerializer(instance.hall).data
         data['images'] = []
         for entry in instance.images.all():
             image = ImageSerializer(entry).data
@@ -17,22 +27,7 @@ class EventSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Event
-        fields = '__all__'
-
-
-class ApplicationSerializer(serializers.ModelSerializer):
-    seats = SeatSerializer(many=True, read_only=True)
-
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["event"] = EventSerializer(instance.event).data
-        data["seats"] = SeatSerializer(instance.seats).data
-        return data
-
-    class Meta:
-        model = Application
-        fields = ('id', 'event', 'seats')
-        extra_kwargs = {'seats': {'required': True}}
+        fields = ('id', 'name', 'price', 'images', 'administrator')
 
 
 class ApplicationSeatSerializer(serializers.ModelSerializer):
