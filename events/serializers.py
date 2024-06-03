@@ -1,18 +1,49 @@
 from rest_framework import serializers
-from .models import Event
-from halls.serializers import HallSerializer
+from .models import Event, Application, ApplicationSeat
+from images.models import Image
+from halls.models import Seat
 from images.serializers import ImageSerializer
+from halls.serializers import SeatSerializer
 
-class EventSerializer(serializers.ModelSerializer):
-    images = ImageSerializer(many=True, read_only=True)
+class ApplicationSerializer(serializers.ModelSerializer):
+    seats = serializers.PrimaryKeyRelatedField(many=True, queryset=Seat.objects.all())
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        data["hall"] = HallSerializer(instance.hall).data
-        data["images"] = ImageSerializer(instance.images).data
+        data["event"] = EventSerializer(instance.event).data
+        data['seats'] = []
+        for entry in instance.seats.all():
+            seat = SeatSerializer(entry).data
+            data['seats'].append(seat)
+
+        return data
+    
+    class Meta:
+        model = Application
+        fields = '__all__'
+
+
+class EventSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['images'] = []
+        for entry in instance.images.all():
+            image = ImageSerializer(entry).data
+            data['images'].append(image)
         return data
 
     class Meta:
         model = Event
-        fields = ('id', 'name', 'date', 'begin', 'end', 'images', 'hall')
-        extra_kwargs = {'images': {'required': True}}
+        fields = ('id', 'name', 'price', 'images', 'administrator')
+
+
+class ApplicationSeatSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["application"] = ApplicationSerializer(instance.application).data
+        data["seat"] = SeatSerializer(instance.seat).data
+        return data
+
+    class Meta:
+        model = ApplicationSeat
+        fields = '__all__'

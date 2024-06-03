@@ -1,8 +1,12 @@
 from rest_framework import serializers
-from .models import Stadium
+from .models import Stadium, City
 from images.serializers import ImageSerializer
-from cities.serializers import CitySerializer
-from users.serializers import UserSerializer
+from authentication.serializers import UserSerializer
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = '__all__'
 
 class StadiumSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
