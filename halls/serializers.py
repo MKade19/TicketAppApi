@@ -14,11 +14,6 @@ class HallSerializer(serializers.ModelSerializer):
 
 
 class SeatSerializer(serializers.ModelSerializer):
-    def to_representation(self, instance):
-        data = super().to_representation(instance)
-        data["hall"] = HallSerializer(instance.hall).data
-        return data
-
     class Meta:
         model = Seat
         fields = '__all__'
