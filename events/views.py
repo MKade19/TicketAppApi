@@ -2,9 +2,10 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 from .models import Event, Application
-from halls.models import Seat
+from stadiums.models import Seat
 from .serializers import EventSerializer, ApplicationSerializer
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -41,14 +42,13 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         seats = Seat.objects.filter(pk__in=seat_ids)
 
         application = serializer.instance
-        application.seats.set(seats)  # Use .set() for efficient bulk assignment
+        application.seats.set(seats)
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['get'])
     def event(self, request):
         event_id = request.query_params.get('id')
-        print(event_id)
         
         if event_id:
             data = self.queryset.filter(event=event_id)

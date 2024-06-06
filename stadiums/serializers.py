@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stadium, City
+from .models import Stadium, City, Hall, Seat
 from images.serializers import ImageSerializer
 from authentication.serializers import UserSerializer
 
@@ -7,6 +7,18 @@ class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = '__all__'
+
+
+class HallSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["stadium"] = StadiumSerializer(instance.stadium).data
+        return data
+
+    class Meta:
+        model = Hall
+        fields = '__all__'
+
 
 class StadiumSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
@@ -18,4 +30,10 @@ class StadiumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Stadium
+        fields = ('name', 'image', 'description', 'city', 'administrator')
+        
+
+class SeatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seat
         fields = '__all__'

@@ -31,7 +31,6 @@ INSTALLED_APPS = [
     'authentication',
     'stadiums',
     'images',
-    'halls',
     'events',
     'tickets'
 ]
