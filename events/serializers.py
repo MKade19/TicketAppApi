@@ -26,6 +26,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        data["hall"] = HallSerializer(instance.hall).data
         data['images'] = []
         for entry in instance.images.all():
             image = ImageSerializer(entry).data

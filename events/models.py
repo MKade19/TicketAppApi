@@ -17,6 +17,7 @@ class Event(models.Model):
 
 class Application(models.Model):
     status = models.CharField(max_length=10, default='draft')
+    created_date = models.DateField(blank=True, null=True)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     seats = models.ManyToManyField(Seat, through='ApplicationSeat')
     
