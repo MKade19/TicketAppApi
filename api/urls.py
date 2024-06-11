@@ -4,8 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework import routers
 from authentication.views import UserViewSet, RoleViewSet
-from stadiums.views import StadiumViewSet, CityViewSet
-from halls.views import HallViewSet, SeatViewSet
+from stadiums.views import StadiumViewSet, CityViewSet, HallViewSet, SeatViewSet
 from events.views import EventViewSet, ApplicationViewSet
 from authentication.urls import urlpatterns as auth_urls
 
