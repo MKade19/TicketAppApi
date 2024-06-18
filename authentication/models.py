@@ -18,7 +18,7 @@ class Role(models.Model):
 class User(AbstractUser):
     fullname = models.CharField(max_length=50)
     email = models.EmailField(max_length=254, unique=True)
-    is_active = models.BooleanField()
+    is_active = models.BooleanField(default=True)
     role = models.ForeignKey(Role, on_delete=models.PROTECT, default=1)
     
     USERNAME_FIELD = 'email'

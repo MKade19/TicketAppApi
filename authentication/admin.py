@@ -3,7 +3,7 @@ from .models import User, Profile, Role
 
 class UserAdmin(admin.ModelAdmin):
     list_display = ['fullname', 'email']
-
+    search_fields = ['fullname', 'email']
 
 class ProfileAdmin(admin.ModelAdmin):
     list_editable = ['verified']
