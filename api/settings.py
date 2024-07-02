@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'dj_rest_auth',
-    'dj_rest_auth.registration'
+    'dj_rest_auth.registration',
+    'chat',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -199,8 +201,8 @@ SOCIALACCOUNT_PROVIDERS = {
         # (``socialaccount`` app) containing the required client
         # credentials, or list them here:
         'APP': {
-            'client_id': '971170850198-mnr0mquse08qs47nuh5jjcvetkk7sd65.apps.googleusercontent.com',
-            'secret': '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',
+            'client_id': '199062825926-p2sv0g5jd60a894ses9n6k0uhg5v6gtc.apps.googleusercontent.com',
+            'secret': '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',
             'key': ''
         }
     }
@@ -213,3 +215,11 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+ASGI_APPLICATION = 'api.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+        }
+    }
