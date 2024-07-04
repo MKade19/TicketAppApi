@@ -24,7 +24,7 @@ class StadiumViewSet(viewsets.ModelViewSet):
             e_ls = Event.objects.prefetch_related(Prefetch('hall', queryset=h_qs)).values_list('pk', flat=True)
             data = []
 
-            for application in Application.objects.filter(event_id__in=e_ls):
+            for application in Application.objects.filter(event_id__in=e_ls, status='draft'):
                 data.append(application)
         else:
             data = self.queryset.all()

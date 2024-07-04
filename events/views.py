@@ -42,7 +42,7 @@ class EventViewSet(viewsets.ModelViewSet):
             e_qs = Event.objects.select_related('hall').filter(hall__in=h_ls)
             e_qs = e_qs.filter(date__gt=current_date).order_by('date')
 
-            a_ls = Application.objects.filter(status='approved').values_list('event')
+            a_ls = Application.objects.filter(status='approved').values('event')
             data = []
 
             for event in e_qs.filter(pk__in=a_ls):
@@ -90,3 +90,23 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         
         serializer = self.serializer_class(data, many=True)
         return Response(serializer.data)
+    
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()  # Retrieve object using `get_object`
+
+        if ('status' in request.data):
+            if (request.data['status'] == 'approved'):
+                approved_application = Application.objects.filter(status='approved').values().first()
+                
+                if (approved_application != None):
+                    return Response({'error': 'Some application for this event has been already approved.'}, status=status.HTTP_400_BAD_REQUEST) 
+            
+            if (request.data['status'] == 'denied'):
+                if (instance.__dict__['status'] == 'approved'):
+                    return Response({'error': 'You can not deny approved application.'}, status=status.HTTP_400_BAD_REQUEST) 
+
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)  # Raise for invalid data
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK) 
