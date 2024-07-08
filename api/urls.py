@@ -6,6 +6,7 @@ from rest_framework import routers
 from authentication.views import UserViewSet, RoleViewSet
 from stadiums.views import StadiumViewSet, CityViewSet, HallViewSet, SeatViewSet
 from events.views import EventViewSet, ApplicationViewSet
+from tickets.views import TicketViewSet
 from authentication.urls import urlpatterns as auth_urls
 
 BASE_URL = 'ticket-app/api/'
@@ -19,6 +20,7 @@ router.register('halls', HallViewSet, basename='halls')
 router.register('seats', SeatViewSet, basename='seats')
 router.register('events', EventViewSet, basename='events')
 router.register('applications', ApplicationViewSet, basename='applications')
+router.register('tickets', TicketViewSet, basename='tickets')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
