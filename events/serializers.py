@@ -15,7 +15,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
         for entry in instance.seats.all():
             seat = SeatSerializer(entry).data
             data['seats'].append(seat)
-
+            
         return data
     
     class Meta:

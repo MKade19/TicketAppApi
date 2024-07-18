@@ -109,7 +109,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
     
     def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()  # Retrieve object using `get_object`
+        instance = self.get_object()
 
         if ('status' in request.data):
             if (request.data['status'] == 'approved'):
@@ -123,7 +123,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                     return Response({'error': 'You can not deny approved application.'}, status=status.HTTP_400_BAD_REQUEST) 
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)  # Raise for invalid data
+        serializer.is_valid(raise_exception=True)
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK) 
