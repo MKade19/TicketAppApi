@@ -23,6 +23,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ApplicationTicketSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data["event"] = EventSerializer(instance.event).data
+            
+        return data
+
+    class Meta:
+        model = Application
+        fields = ('id', 'event',)
+
+
 class EventSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)

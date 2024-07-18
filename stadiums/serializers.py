@@ -25,7 +25,6 @@ class StadiumSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["image"] = ImageSerializer(instance.image).data
         data["city"] = CitySerializer(instance.city).data
-        data["administrator"] = UserSerializer(instance.administrator).data
         return data    
 
     class Meta:
@@ -42,3 +41,10 @@ class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
         fields = '__all__'
+
+
+
+class SeatTicketSerializer(serializers.ModelSerializer):    
+    class Meta:
+        model = Seat
+        fields = ('id', 'number', 'row', 'sector',)

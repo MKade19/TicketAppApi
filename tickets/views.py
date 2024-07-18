@@ -35,3 +35,19 @@ class TicketViewSet(viewsets.ModelViewSet):
         
         serializer = self.serializer_class(data, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['get'])
+    def customer(self, request):
+        customer_id = request.query_params.get('id')
+        status = request.query_params.get('status')
+        
+        if customer_id:
+            data = self.queryset.filter(customer=customer_id)
+
+            if status:
+                data = data.filter(is_sold=status)
+        else:
+            return Response({'error': 'Customer id was not provided.'}, status=status.HTTP_400_BAD_REQUEST) 
+        
+        serializer = self.serializer_class(data, many=True)
+        return Response(serializer.data)
