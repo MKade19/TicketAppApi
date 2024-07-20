@@ -130,3 +130,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+class UserTicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'fullname', 'email',)

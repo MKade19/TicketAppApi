@@ -48,7 +48,12 @@ class EventViewSet(viewsets.ModelViewSet):
             for event in e_qs.filter(pk__in=a_ls):
                 data.append(event)
         else:
-            data = self.queryset.all().filter(date__gt=current_date).order_by('date')
+            e_qs = self.queryset.all().filter(date__gt=current_date).order_by('date')
+            a_ls = Application.objects.filter(status='approved').values('event')
+            data = []
+
+            for event in e_qs.filter(pk__in=a_ls):
+                data.append(event)
         
         serializer = EventSerializer(data, many=True)
         return Response(serializer.data)
@@ -91,8 +96,20 @@ class ApplicationViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(data, many=True)
         return Response(serializer.data)
     
+    @action(detail=False, methods=['get'])
+    def approved_event(self, request):
+        event_id = request.query_params.get('id')
+        
+        if event_id:
+            data = self.queryset.filter(event=event_id, status='approved').first()
+        else:
+            return Response({'error': 'Event id was not provided.'}, status=status.HTTP_400_BAD_REQUEST) 
+        
+        serializer = self.serializer_class(data, many=False)
+        return Response(serializer.data)
+    
     def partial_update(self, request, *args, **kwargs):
-        instance = self.get_object()  # Retrieve object using `get_object`
+        instance = self.get_object()
 
         if ('status' in request.data):
             if (request.data['status'] == 'approved'):
@@ -106,7 +123,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
                     return Response({'error': 'You can not deny approved application.'}, status=status.HTTP_400_BAD_REQUEST) 
 
         serializer = self.get_serializer(instance, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)  # Raise for invalid data
+        serializer.is_valid(raise_exception=True)
 
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK) 
