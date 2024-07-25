@@ -113,7 +113,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         if ('status' in request.data):
             if (request.data['status'] == 'approved'):
-                approved_application = Application.objects.filter(status='approved').values().first()
+                event_id = self.get_serializer(instance).data['event']['id']
+                approved_application = Application.objects.filter(status='approved', event_id=event_id).values().first()
                 
                 if (approved_application != None):
                     return Response({'error': 'Some application for this event has been already approved.'}, status=status.HTTP_400_BAD_REQUEST) 
