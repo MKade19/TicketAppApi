@@ -4,22 +4,46 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from datetime import date
-from django.db.models import Prefetch
+import os
+from django.conf import settings
 
 from .models import Event, Application
-from stadiums.models import Seat, Stadium, Hall, City
-from stadiums.serializers import HallSerializer, StadiumSerializer, CitySerializer
-from .serializers import EventSerializer, ApplicationSerializer
+from stadiums.models import Seat, Stadium, Hall
+from images.models import Image
+from .serializers import EventSerializer, ApplicationSerializer, EventImagesSerializer
+
+
+def deleteImages(images):
+    for image in images:
+        filename = image['image_url'][image['image_url'].rfind('/')+1:]
+        os.remove(os.path.join(settings.MEDIA_ROOT, 'images', filename))  
+        Image.objects.filter(id=image['id']).delete()
+
 
 class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = EventSerializer
 
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = self.get_serializer(instance).data
+
+        if len(request.data.get('images')) != 0:
+            deleteImages(data['images'])
+        
+        return super().update(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = self.get_serializer(instance).data
+        deleteImages(data['images'])
+
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=False, methods=['get'])
     def admin(self, request):
         admin_id = request.query_params.get('id')
-        print(admin_id)
         
         if admin_id:
             data = self.queryset.filter(administrator=admin_id)
@@ -113,7 +137,8 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         if ('status' in request.data):
             if (request.data['status'] == 'approved'):
-                approved_application = Application.objects.filter(status='approved').values().first()
+                event_id = self.get_serializer(instance).data['event']['id']
+                approved_application = Application.objects.filter(status='approved', event_id=event_id).values().first()
                 
                 if (approved_application != None):
                     return Response({'error': 'Some application for this event has been already approved.'}, status=status.HTTP_400_BAD_REQUEST) 

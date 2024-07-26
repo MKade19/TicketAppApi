@@ -49,6 +49,19 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = '__all__'
 
+class EventImagesSerializer(serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        data['images'] = []
+        for entry in instance.images.all():
+            image = ImageSerializer(entry).data
+            data['images'].append(image)
+        return data
+
+    class Meta:
+        model = Event
+        fields = ('images',)
+
 
 class ApplicationSeatSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
