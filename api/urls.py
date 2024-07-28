@@ -9,6 +9,7 @@ from events.views import EventViewSet, ApplicationViewSet
 from tickets.views import TicketViewSet
 from images.views import ImageViewSet
 from authentication.urls import urlpatterns as auth_urls
+from . import routing
 
 BASE_URL = 'ticket-app/api/'
 
@@ -31,7 +32,8 @@ urlpatterns = [
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(BASE_URL, include((router.urls, 'crud'))),
-    path(BASE_URL + 'auth/', include((auth_urls, 'auth')))
+    path(BASE_URL + 'auth/', include((auth_urls, 'auth'))),    
+    path('ws/', include(routing.websocket_urlpatterns))
 ]
 
 urlpatterns += router.urls
